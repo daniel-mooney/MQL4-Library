@@ -47,7 +47,8 @@ class COrder: public CObject {
         COrder(
             int ticket,
             string symbol,
-            int type,
+            datetime open_time,
+            ENUM_OrderType type,
             double lots,
             double order_price,
             double stoploss,
@@ -89,6 +90,7 @@ class COrder: public CObject {
 
         int getTicket() const;
         string getSymbol() const;
+        datetime getOpenTime() const;
         ENUM_OrderType getType() const;
         double getLots() const;
         double getOrderPrice() const;
@@ -112,6 +114,7 @@ class COrder: public CObject {
     private:
         int ticket_;
         string symbol_;
+        datetime open_time_;
         ENUM_OrderType type_;
         double lots_;
         double order_price_;
@@ -126,13 +129,15 @@ class COrder: public CObject {
 COrder::COrder(
     int ticket,
     string symbol,
-    int type,
+    datetime open_time,
+    ENUM_OrderType type,
     double lots,
     double order_price,
     double stoploss,
     double takeprofit
 )   : ticket_(ticket)
     , symbol_(symbol)
+    , open_time_(open_time)
     , type_((ENUM_OrderType) type)
     , lots_(lots)
     , order_price_(order_price)
@@ -222,6 +227,11 @@ int COrder::getTicket() const {
 // ----------
 string COrder::getSymbol() const {
     return symbol_;
+}
+
+// ----------
+datetime COrder::getOpenTime() const {
+    return open_time_;
 }
 
 // ----------
