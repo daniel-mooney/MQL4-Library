@@ -39,6 +39,21 @@ void freeList(CList* list);
  */
 int symbolHasOrder(string symbol);
 
+/**
+ * @brief Draws an arrow on the trading chart
+ * 
+ * @param id The id of the arrow
+ * @param colour The colour of the arrow
+ * @param direction The direction of the arrow
+ * @return bool True if the arrow was drawn, false otherwise.
+ */
+bool drawChartArrow(
+    string id,
+    color colour,
+    int direction,
+    int offset = 0
+);
+
 
 // ---------------------- Definitions ----------------------
 void freeArrayObj(CArrayObj* array) {
@@ -74,6 +89,55 @@ int symbolHasOrder(string symbol) {
     }
 
     return _NO_ORDER_FOUND_;
+}
+
+// ----------
+bool drawChartArrow(
+    string id,
+    color colour,
+    int direction,
+    int offset
+) {
+    if (direction != SYMBOL_ARROWUP && direction != SYMBOL_ARROWDOWN) {
+        Print("drawChartArrow(): Invalid direction");
+        return false;
+    }
+
+    // Use atr to offset arrow from price
+    double atr = iATR(
+        Symbol(),
+        PERIOD_CURRENT,
+        14,
+        offset
+    );
+    const double atr_multiplier = 0.75;
+
+    double anchor_price = 0.0;
+    
+    if (direction == SYMBOL_ARROWUP) {
+        anchor_price = Low[offset] - atr * atr_multiplier;
+    } else {
+        anchor_price = High[offset] + 2 * atr * atr_multiplier;
+    }
+
+
+    const int arrow_height = 7;
+
+
+    bool success = ObjectCreate(
+        id,
+        OBJ_ARROW,
+        0,
+        Time[offset],
+        anchor_price
+    );
+
+    ObjectSet(id, OBJPROP_ARROWCODE, direction);
+    ObjectSet(id, OBJPROP_COLOR, colour);
+    ObjectSet(id, OBJPROP_WIDTH, arrow_height);
+    ObjectSet(id, OBJPROP_STYLE, STYLE_SOLID);
+
+    return success;
 }
 
 #endif

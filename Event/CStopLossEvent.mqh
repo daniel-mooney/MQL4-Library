@@ -21,7 +21,7 @@ class CStopLossEvent: public COrderEventBase {
          * @brief Checks if a stop loss event has taken place.
          * Notifies all listeners if it has taken place.
          */
-        void eventMonitor() override;
+        int eventMonitor() override;
 };
 
 // ---------- Definitions ----------
@@ -32,8 +32,9 @@ CStopLossEvent::CStopLossEvent(
 {}
 
 // ----------
-void CStopLossEvent::eventMonitor() {
+int CStopLossEvent::eventMonitor() {
     CArrayObj* orders = order_pool_.Orders();
+    int event_count = 0;
     
     // Check close type of orders
     for (int i = 0; i < orders.Total(); i++) {
@@ -52,13 +53,15 @@ void CStopLossEvent::eventMonitor() {
                 listener.stopLossCallback(*order);
                 listener = listeners_.GetNextNode();
             }
+
+            event_count++;
         }
     }
 
     orders.Shutdown();
     delete orders;
 
-    return;
+    return event_count;
 }
 
 

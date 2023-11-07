@@ -40,7 +40,8 @@ class COrderPool {
         void addOrder(
             int ticket,
             string symbol,
-            int type,
+            datetime open_time,
+            ENUM_OrderType type,
             double lots,
             double open_price,
             double stop_loss,
@@ -114,7 +115,8 @@ COrderPool::~COrderPool() {
 void COrderPool::addOrder(
     int ticket,
     string symbol,
-    int type,
+    datetime open_time,
+    ENUM_OrderType type,
     double lots,
     double open_price,
     double stop_loss,
@@ -134,6 +136,7 @@ void COrderPool::addOrder(
     COrder* order = new COrder(
         ticket,
         symbol,
+        open_time,
         type,
         lots,
         open_price,
@@ -142,6 +145,7 @@ void COrderPool::addOrder(
     );
 
     orders_.Add(order);
+    return;
 }
 
 // ----------

@@ -29,9 +29,9 @@ class CEventMonitorBase: public CObject {
         /**
          * @brief Checks whether an event has taken place
          * 
-         * @return bool True if the event has taken place
+         * @return int How many events have taken place
          */
-        virtual void eventMonitor() = 0;
+        virtual int eventMonitor() = 0;
     
     protected:
         CList* listeners_;

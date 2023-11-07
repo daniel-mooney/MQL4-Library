@@ -22,7 +22,7 @@ class CTakeProfitEvent: public COrderEventBase {
          * @brief Checks whether a take profit event has taken place
          * Notifies all listeners if it has taken place.
          */
-        void eventMonitor() override;
+        int eventMonitor() override;
 };
 
 // ---------- Definitions ----------
@@ -33,8 +33,9 @@ CTakeProfitEvent::CTakeProfitEvent(
 {}
 
 // ----------
-void CTakeProfitEvent::eventMonitor() {
+int CTakeProfitEvent::eventMonitor() {
     CArrayObj* orders = order_pool_.Orders();
+    int event_count = 0;
     
     // Check close type of orders
     for (int i = 0; i < orders.Total(); i++) {
@@ -53,13 +54,15 @@ void CTakeProfitEvent::eventMonitor() {
                 listener.takeProfitCallback(*order);
                 listener = listeners_.GetNextNode();
             }
+
+            event_count++;
         }
     }
 
     orders.Shutdown();
     delete orders;
 
-    return;
+    return event_count;
 }
 
 #endif
