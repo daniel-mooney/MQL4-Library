@@ -7,6 +7,7 @@
 #define NNF_MONEYMANAGEMENT_MQH
 
 #include <MQL4Library/MoneyManagement/CAtrMoneyManager.mqh>
+#include <MQL4Library/DataStructures/LinkedList.mqh>
 
 class CNNFXMoneyManager: public CAtrMoneyManager {
     public:
@@ -51,6 +52,10 @@ class CNNFXMoneyManager: public CAtrMoneyManager {
             double& lots_1,
             double& lots_2
         );
+    
+    private:
+
+        // LinkedList<NNFXOrderPair> order_pairs_;
 };
 
 // ---------------------- Implementation ----------------------

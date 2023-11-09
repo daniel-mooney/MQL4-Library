@@ -203,13 +203,13 @@ class LinkedList {
         /**
          * @brief Removes Nodes from the list that satisfy the predicate
          * 
-         * @param predicate_func 
+         * @param predicate_function 
          */
-        void remove(predicate predicate_func) {
+        void remove(predicate predicate_function) {
             Node<T>* curr = head_;
 
             for (int i = 0; i < size_ && curr != NULL; i++) {
-                if (predicate_func(curr.data())) {
+                if (predicate_function(curr.data())) {
                     if (curr == head_) {
                         pop_front();
                         curr = head_;
@@ -263,6 +263,34 @@ class LinkedList {
          * @return Node<T>* 
          */
         Node<T>* getTail() { return tail_; }
+
+        bool contains(T data) {
+            Node<T>* curr = head_;
+
+            for (int i = 0; i < size_ && curr != NULL; i++) {
+                if (curr.data() == data) {
+                    return true;
+                }
+
+                curr = curr.next();
+            }
+
+            return false;
+        }
+
+        bool contains(predicate predicate_function) {
+            Node<T>* curr = head_;
+
+            for (int i = 0; i < size_ && curr != NULL; i++) {
+                if (predicate_function(curr.data())) {
+                    return true;
+                }
+
+                curr = curr.next();
+            }
+
+            return false;
+        }
 
     private:
         Node<T>* head_;
