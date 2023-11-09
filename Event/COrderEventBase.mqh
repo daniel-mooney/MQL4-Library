@@ -20,6 +20,8 @@ class COrderEventBase: public CEventMonitorBase {
             COrderPool* order_pool
         );
 
+        virtual ~COrderEventBase() {};
+
     protected:
         COrderPool* order_pool_;
 };

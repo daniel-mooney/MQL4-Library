@@ -17,6 +17,8 @@ class CStopLossEvent: public COrderEventBase {
             COrderPool* order_pool
         );
 
+        ~CStopLossEvent() {};
+
         /**
          * @brief Checks if a stop loss event has taken place.
          * Notifies all listeners if it has taken place.
