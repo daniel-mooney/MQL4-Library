@@ -15,7 +15,9 @@ class QQETwoLine: public CIndicatorBase {
             ENUM_MA_METHOD ma_method
         );
 
-        CIndicatorSignal computeSignal();
+        CIndicatorSignal computeSignal(
+            int shift = 0
+        );
 
     private:
         int period_;
@@ -27,7 +29,7 @@ class QQETwoLine: public CIndicatorBase {
 };
 
 //---------------------- Constants ----------------------
-string QQETwoLine::QQE_NAME_ = "MyIndicators/QQETwoLine averages histo + alerts + arrows";
+string QQETwoLine::QQE_NAME_ = "MyIndicators\\QQETwoLine averages histo + alerts + arrows";
 
 //---------------------- Definitions ----------------------
 
@@ -46,7 +48,9 @@ QQETwoLine::QQETwoLine(
 {}
 
 //----------
-CIndicatorSignal QQETwoLine::computeSignal() {
+CIndicatorSignal QQETwoLine::computeSignal(
+    int shift
+) {
     double fast_line = iCustom(
         symbol_,
         timeframe_,
@@ -86,7 +90,7 @@ CIndicatorSignal QQETwoLine::computeSignal() {
         2,
         2,
         3,
-        0
+        shift
     );
 
     double slow_line = iCustom(
@@ -128,7 +132,7 @@ CIndicatorSignal QQETwoLine::computeSignal() {
         2,
         2,
         4,
-        0
+        shift
     );
 
     CIndicatorSignal signal = CIndicatorSignal::NONE;

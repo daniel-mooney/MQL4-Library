@@ -15,7 +15,9 @@ class MovingAverage: public CIndicatorBase {
             ENUM_APPLIED_PRICE applied_price
         );
 
-        CIndicatorSignal computeSignal();
+        CIndicatorSignal computeSignal(
+            int shift = 0
+        );
     
     private:
         int period_;
@@ -41,7 +43,9 @@ MovingAverage::MovingAverage(
 {}
 
 // ----------
-CIndicatorSignal MovingAverage::computeSignal() {
+CIndicatorSignal MovingAverage::computeSignal(
+    int shift
+) {
     double ma = iMA(
         symbol_,
         timeframe_,
@@ -49,18 +53,20 @@ CIndicatorSignal MovingAverage::computeSignal() {
         shift_,
         method_,
         applied_price_,
-        0
+        shift
     );
 
-    double ask = SymbolInfoDouble(symbol_, SYMBOL_ASK);
-    double bid = SymbolInfoDouble(symbol_, SYMBOL_BID);
-    double median_price = (ask + bid) / 2.0;
+    double price = iClose(
+        symbol_,
+        timeframe_,
+        shift
+    );
 
     CIndicatorSignal signal = CIndicatorSignal::NONE;
 
-    if (median_price > ma) {
+    if (price > ma) {
         signal = CIndicatorSignal::BUY;
-    } else if (median_price < ma) {
+    } else if (price < ma) {
         signal = CIndicatorSignal::SELL;
     }
 

@@ -16,7 +16,9 @@ class ALMA: public CIndicatorBase {
             double atr_multiplier
         );
 
-        CIndicatorSignal computeSignal();
+        CIndicatorSignal computeSignal(
+            int shift = 0
+        );
     
     private:
         bool atr_bands_;
@@ -66,18 +68,21 @@ ALMA::ALMA(
 {}
 
 // ----------
-CIndicatorSignal ALMA::computeSignal() {
+CIndicatorSignal ALMA::computeSignal(
+    int shift = 0
+) {
     double alma = alma(
         symbol_,
         timeframe_,
         period_,
         sigma_,
         sample_,
-        PRICE_CLOSE
+        PRICE_CLOSE,
+        shift
     );
 
     CIndicatorSignal signal = CIndicatorSignal::NONE;
-    double close = iClose(symbol_, timeframe_, 0);
+    double close = iClose(symbol_, timeframe_, shift);
 
     if (close > alma) {
         signal = CIndicatorSignal::BUY;
@@ -89,7 +94,7 @@ CIndicatorSignal ALMA::computeSignal() {
         symbol_,
         timeframe_,
         14,
-        0
+        shift
     );
 
     if (

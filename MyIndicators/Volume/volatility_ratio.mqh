@@ -12,7 +12,9 @@ class VolatilityRatio: public CIndicatorBase {
             int period
         );
 
-        CIndicatorSignal computeSignal();
+        CIndicatorSignal computeSignal(
+            int shift = 0
+        );
 
     private:
         int period_;
@@ -35,14 +37,16 @@ VolatilityRatio::VolatilityRatio(
 {}
 
 //----------
-CIndicatorSignal VolatilityRatio::computeSignal() {
+CIndicatorSignal VolatilityRatio::computeSignal(
+    int shift
+) {
     double volatility_ratio = iCustom(
         symbol_,
         timeframe_,
         VOLATILITY_RATIO_NAME_,
         period_,
         0,
-        0
+        shift
     );
 
     CIndicatorSignal signal = CIndicatorSignal::NONE;

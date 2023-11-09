@@ -13,7 +13,9 @@ class SuperTrend: public CIndicatorBase {
             double multiplier
         );
 
-        CIndicatorSignal computeSignal();
+        CIndicatorSignal computeSignal(
+            int shift = 0
+        );
 
     private:
         int period_;
@@ -23,7 +25,7 @@ class SuperTrend: public CIndicatorBase {
 };
 
 //---------------------- Constants ----------------------
-string SuperTrend::SUPERTREND_NAME_ = "MyIndicators/SuperTrendUpdated";
+string SuperTrend::SUPERTREND_NAME_ = "MyIndicators\\SuperTrendUpdated";
 
 //---------------------- Definitions ----------------------
 
@@ -39,7 +41,9 @@ SuperTrend::SuperTrend(
 {}
 
 //----------
-CIndicatorSignal SuperTrend::computeSignal() {
+CIndicatorSignal SuperTrend::computeSignal(
+    int shift
+) {
     double trend_up = iCustom(
         symbol_,
         timeframe_,
@@ -47,7 +51,7 @@ CIndicatorSignal SuperTrend::computeSignal() {
         period_,
         multiplier_,
         0,
-        0
+        shift
     );
 
     double trend_down = iCustom(
@@ -57,7 +61,7 @@ CIndicatorSignal SuperTrend::computeSignal() {
         period_,
         multiplier_,
         1,
-        0
+        shift
     );
 
     CIndicatorSignal signal = CIndicatorSignal::NONE;

@@ -79,6 +79,13 @@ class CNNFXMoneyManager: public CAtrMoneyManager {
         void manageOrders();
 
         /**
+         * @brief Removes orders that no longer exist
+         * from the LinkedLists
+         * 
+         */
+        void removeStaleOrders();
+
+        /**
          * @brief Take profit event callback
          * 
          * @param order 
@@ -166,7 +173,6 @@ void CNNFXMoneyManager::addNNFXOrder(
         runner_ticket
     );
 
-    Print("Adding order pair");
     order_pairs_.push_back(order_pair);
     return;
 }
@@ -174,6 +180,8 @@ void CNNFXMoneyManager::addNNFXOrder(
 // ----------
 void CNNFXMoneyManager::manageOrders() {
     // Modify trailing stop if necessary
+    removeStaleOrders();
+
     Node<int>* take_profit_node = take_profit_tickets_.head();
 
     while (take_profit_node != NULL) {
@@ -224,6 +232,43 @@ void CNNFXMoneyManager::manageOrders() {
 }
 
 // ----------
+void CNNFXMoneyManager::removeStaleOrders() {
+    // Remove stale orders from order pair list
+    ObjectNode<CNNFXOrderPair>* curr = order_pairs_.head();
+    int i = 0;
+
+    while (curr != NULL) {
+        CNNFXOrderPair* order_pair = curr.data();
+        curr = curr.next();
+
+        if (!order_pool_.contains(order_pair.runnerTicket())) {
+            order_pairs_.remove(i);
+            continue;
+        }
+
+        i++;
+    }
+
+    // Remove stale orders from take profit ticket list
+    Node<int>* take_profit_node = take_profit_tickets_.head();
+    i = 0;
+
+    while (take_profit_node != NULL) {
+        int ticket = take_profit_node.data();
+        take_profit_node = take_profit_node.next();
+
+        if (!order_pool_.contains(ticket)) {
+            take_profit_tickets_.remove(i);
+            continue;
+        }
+
+        i++;
+    }
+
+    return;
+}
+
+// ----------
 void CNNFXMoneyManager::takeProfitCallback(const COrder& order) {
     // Find matching runner order
     int ticket = order.getTicket();
@@ -237,7 +282,6 @@ void CNNFXMoneyManager::takeProfitCallback(const COrder& order) {
         if (order_pair.takeProfitTicket() == ticket) {
             runner_ticket = order_pair.runnerTicket();
 
-            Print("Adding TP ticket");
             take_profit_tickets_.push_back(
                 runner_ticket
             );

@@ -15,7 +15,9 @@ class StdDevMA: public CIndicatorBase {
             ENUM_MA_METHOD ma_method
         );
 
-        CIndicatorSignal computeSignal();
+        CIndicatorSignal computeSignal(
+            int shift = 0
+        );
 
     private:
         int stddev_period_;
@@ -41,7 +43,9 @@ StdDevMA::StdDevMA(
 {}
 
 //----------
-CIndicatorSignal StdDevMA::computeSignal() {
+CIndicatorSignal StdDevMA::computeSignal(
+    int shift
+) {
     // Create array of std dev values
     double stddev[];
     ArrayResize(stddev, ma_period_);
@@ -54,7 +58,7 @@ CIndicatorSignal StdDevMA::computeSignal() {
             0,
             stddev_method_,
             PRICE_CLOSE,
-            i
+            i + shift
         );
     }
 

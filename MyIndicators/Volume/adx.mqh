@@ -12,7 +12,9 @@ class ADX: public CIndicatorBase {
             int period
         );
 
-        CIndicatorSignal computeSignal();
+        CIndicatorSignal computeSignal(
+            int shift = 0
+        );
 
     private:
         int period_;
@@ -30,14 +32,16 @@ ADX::ADX(
 {}
 
 //----------
-CIndicatorSignal ADX::computeSignal() {
+CIndicatorSignal ADX::computeSignal(
+    int shift
+) {
     double adx = iADX(
         symbol_,
         timeframe_,
         period_,
         PRICE_CLOSE,
         MODE_MAIN,
-        0
+        shift
     );
 
     CIndicatorSignal signal = CIndicatorSignal::NONE;

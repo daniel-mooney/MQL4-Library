@@ -14,7 +14,9 @@ class Cci: public CIndicatorBase {
             int shift = 0
         );
 
-        CIndicatorSignal computeSignal();
+        CIndicatorSignal computeSignal(
+            int shift = 0
+        );
     
     private:
         int period_;
@@ -36,13 +38,15 @@ Cci::Cci(
 {}
 
 // ----------
-CIndicatorSignal Cci::computeSignal() {
+CIndicatorSignal Cci::computeSignal(
+    int shift
+) {
     double cci = iCCI(
         symbol_,
         timeframe_,
         period_,
         applied_price_,
-        shift_
+        shift
     );
 
     // Zero cross

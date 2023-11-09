@@ -24,7 +24,9 @@ class CIndicatorBase {
          * 
          * @return IndicatorSignal 
          */
-        virtual CIndicatorSignal computeSignal() = 0;
+        virtual CIndicatorSignal computeSignal(
+            int shift = 0
+        ) = 0;
     
     protected:
         string symbol_;

@@ -243,10 +243,11 @@ void COrderPool::closeAllOrders() {
 
     while (order != NULL) {
         order.close();
-        orders_.DeleteCurrent();
-        
         order = orders_.GetNextNode();
     }
+
+    orders_.Clear();
+    return;
 }
 
 #endif
