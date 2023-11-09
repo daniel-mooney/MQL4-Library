@@ -20,6 +20,12 @@ class CIndicatorSignal {
         static const CIndicatorSignal SELL;
 
         /**
+         * @brief Default constructor
+         * 
+         */
+        CIndicatorSignal();
+
+        /**
          * @brief Constructs a new CIndicatorSignal object
          * 
          * @param signal 
@@ -63,6 +69,10 @@ const CIndicatorSignal CIndicatorSignal::SELL = CIndicatorSignal(SignalType::I_S
 
 
 // ---------------------- Definitions
+CIndicatorSignal::CIndicatorSignal()
+    : signal_(SignalType::I_NONE) 
+{}
+
 CIndicatorSignal::CIndicatorSignal(
     SignalType signal
 ) : signal_(signal) {}

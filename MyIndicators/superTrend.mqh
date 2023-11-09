@@ -23,7 +23,7 @@ class SuperTrend: public CIndicatorBase {
 };
 
 //---------------------- Constants ----------------------
-string SuperTrend::SUPERTREND_NAME_ = "SuperTrendUpdated";
+string SuperTrend::SUPERTREND_NAME_ = "MyIndicators/SuperTrendUpdated";
 
 //---------------------- Definitions ----------------------
 
