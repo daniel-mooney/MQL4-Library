@@ -59,6 +59,14 @@ class CNNFXOrderPair {
          */
         bool hasTakenProfit() const;
 
+        /**
+         * @brief Comparison operator
+         * 
+         * @param rhs 
+         * @return bool
+         */
+        bool operator==(const CNNFXOrderPair& rhs) const;
+
     
     private:
         int take_profit_ticket_;
@@ -109,5 +117,18 @@ void CNNFXOrderPair::takeProfit() {
 // ----------
 bool CNNFXOrderPair::hasTakenProfit() const {
     return taken_profit_;
+}
+
+// ----------
+bool CNNFXOrderPair::operator==(const CNNFXOrderPair& rhs) const {
+    bool take_profit_ticket = take_profit_ticket_ == rhs.take_profit_ticket_;
+    bool runner_ticket = runner_ticket_ == rhs.runner_ticket_;
+    bool taken_profit = taken_profit_ == rhs.taken_profit_;
+
+    return (
+        take_profit_ticket
+        && runner_ticket
+        && taken_profit
+    );
 }
 #endif

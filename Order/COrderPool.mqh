@@ -94,6 +94,12 @@ class COrderPool {
          */
         int removeStaleOrders();
 
+        /**
+         * @brief Closes all orders in the order pool
+         * 
+         */
+        void closeAllOrders();
+
     private:
         CList* orders_;
 };
@@ -229,6 +235,18 @@ int COrderPool::removeStaleOrders() {
     }
 
     return num_removed;
+}
+
+// ----------
+void COrderPool::closeAllOrders() {
+    COrder* order = orders_.GetFirstNode();
+
+    while (order != NULL) {
+        order.close();
+        orders_.DeleteCurrent();
+        
+        order = orders_.GetNextNode();
+    }
 }
 
 #endif

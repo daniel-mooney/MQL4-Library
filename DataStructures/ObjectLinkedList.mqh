@@ -1,24 +1,32 @@
-#ifndef LINKED_LIST_MQH
-#define LINKED_LIST_MQH
+#ifndef OBJECT_LINKED_LIST_HPP
+#define OBJECT_LINKED_LIST_HPP
 
-#include <MQL4Library/DataStructures/Node.mqh>
+#include <MQL4Library/DataStructures/ObjectNode.mqh>
 
+/**
+ * @brief A linked list of objects
+ * @details Objects can only be passed by reference
+ * @note A copy of the reference to the object is 
+ * stored in the list
+ * 
+ * @tparam T 
+ */
 template <typename T>
-class LinkedList {
+class ObjectLinkedList {
     public:
         /**
          * @brief Predicate function used for identifying nodes
          * 
          */
-        typedef bool (*predicate)(const T&);
+        typedef bool (*ObjectPredicate)(const T&);
 
         /**
          * @brief Construct a new Linked List object
-         * @note The head and tail pointers are initialized
+         * @note The head and tail pointers should be initialized
          * to NULL and the size is initialized to 0
          * 
          */
-        LinkedList() : head_(NULL), tail_(NULL), size_(0) {}
+        ObjectLinkedList() : head_(NULL), tail_(NULL), size_(0) {}
 
         /**
          * @brief Destroy the Linked List object
@@ -26,11 +34,11 @@ class LinkedList {
          * to free all memory associated with the list
          * 
          */
-        ~LinkedList() {
-            Node<T>* curr = head_;
+        ~ObjectLinkedList() {
+            ObjectNode<T>* curr = head_;
 
             for (int i = 0; i < size_ && curr != NULL; i++) {
-                Node<T>* next = curr.next();
+                ObjectNode<T>* next = curr.next();
                 delete curr;
                 curr = next;
             }
@@ -44,12 +52,12 @@ class LinkedList {
         int size() const { return size_; }
 
         /**
-         * @brief Places a new Node at the front of the list
+         * @brief Places a new ObjectNode at the front of the list
          * 
          * @param data 
          */
-        void push_front(T data) {
-            Node<T>* node = new Node<T>(data);
+        void push_front(T& data) {
+            ObjectNode<T>* node = new ObjectNode<T>(data);
 
             if (head_ == NULL) {
                 head_ = node;
@@ -65,12 +73,12 @@ class LinkedList {
         }
 
         /**
-         * @brief Places a new Node at the back of the list
+         * @brief Places a new ObjectNode at the back of the list
          * 
          * @param data 
          */
-        void push_back(T data) {
-            Node<T>* node = new Node<T>(data);
+        void push_back(T& data) {
+            ObjectNode<T>* node = new ObjectNode<T>(data);
 
             if (tail_ == NULL) {
                 head_ = node;
@@ -86,12 +94,14 @@ class LinkedList {
         }
 
         /**
-         * @brief Inserts a new Node at the specified index
+         * @brief Inserts a new ObjectNode at the specified index
          * 
          * @param index 
          * @param data 
+         * 
+         * @return true if the ObjectNode was inserted
          */
-        void insert(int index, T data) {
+        void insert(int index, T& data) {
             if (index < 0 || index > size_) {
                 return;
             }
@@ -104,8 +114,8 @@ class LinkedList {
                 return;
             }
 
-            Node<T>* node = new Node<T>(data);
-            Node<T>* curr = head_;
+            ObjectNode<T>* node = new ObjectNode<T>(data);
+            ObjectNode<T>* curr = head_;
 
             for (int i = 0; i < index; i++) {
                 curr = curr.next();
@@ -121,7 +131,7 @@ class LinkedList {
         }
 
         /**
-         * @brief Removes the Node at the front of the list
+         * @brief Removes the first ObjectNode in the list
          * 
          */
         void pop_front() {
@@ -129,14 +139,14 @@ class LinkedList {
                 return;
             }
 
-            Node<T>* node = head_;
-            head_ = head_.next();
-            delete node;
+            ObjectNode<T>* next = head_.next();
+            delete head_;
+            head_ = next;
 
             if (head_ == NULL) {
                 tail_ = NULL;
             } else {
-                head_.setPrev(NULL);                
+                head_.setPrev(NULL);
             }
 
             size_--;
@@ -144,7 +154,7 @@ class LinkedList {
         }
 
         /**
-         * @brief Removes the Node at the back of the list
+         * @brief Removes the last ObjectNode in the list
          * 
          */
         void pop_back() {
@@ -152,9 +162,9 @@ class LinkedList {
                 return;
             }
 
-            Node<T>* node = tail_;
-            tail_ = tail_.prev();
-            delete node;
+            ObjectNode<T>* prev = tail_.prev();
+            delete tail_;
+            tail_ = prev;
 
             if (tail_ == NULL) {
                 head_ = NULL;
@@ -167,7 +177,7 @@ class LinkedList {
         }
 
         /**
-         * @brief Removes the Node at the specified index
+         * @brief Removes the ObjectNode at the specified index
          * 
          * @param index 
          */
@@ -184,7 +194,7 @@ class LinkedList {
                 return;
             }
 
-            Node<T>* curr = head_;
+            ObjectNode<T>* curr = head_;
 
             for (int i = 0; i < index; i++) {
                 curr = curr.next();
@@ -199,27 +209,26 @@ class LinkedList {
         }
 
         /**
-         * @brief Removes a node from the list if the predicate
-         * function returns true
+         * @brief Removes Nodes from the list that satisfy the ObjectPredicate
          * 
          * @param predicate_function 
          */
-        void remove(predicate predicate_function) {
-            Node<T>* curr = head_;
+        void remove(ObjectPredicate predicate_function) {
+            ObjectNode<T>* curr = head_;
 
-            while (curr != NULL) {
-                T data = curr.data();
+            for (int i = 0; i < size_ && curr != NULL; i++) {
+                T data = *curr.data();
                 if (predicate_function(data)) {
                     if (curr == head_) {
                         pop_front();
                         curr = head_;
                     } else if (curr == tail_) {
                         pop_back();
-                        curr = NULL;
+                        curr = tail_;
                     } else {
-                        Node<T>* next = curr.next();
-                        curr.prev().setNext(next);
-                        next.setPrev(curr.prev());
+                        curr.prev().setNext(curr.next());
+                        curr.next().setPrev(curr.prev());
+                        ObjectNode<T>* next = curr.next();
                         delete curr;
                         curr = next;
                     }
@@ -234,18 +243,14 @@ class LinkedList {
         }
 
         /**
-         * @brief Returns the data stored in the Node at the
-         * specified index
+         * @brief Returns a reference to the data stored in the ObjectNode
+         * at the specified index
          * 
          * @param index 
-         * @return T 
+         * @return T& 
          */
-        T at(int index) const {
-            if (index < 0 || index >= size_) {
-                return NULL;
-            }
-
-            Node<T>* curr = head_;
+        T* at(int index) {
+            ObjectNode<T>* curr = head_;
 
             for (int i = 0; i < index; i++) {
                 curr = curr.next();
@@ -255,31 +260,38 @@ class LinkedList {
         }
 
         /**
-         * @brief Returns a pointer to the head of the list
+         * @brief Returns a pointer to the head ObjectNode
          * 
-         * @return Node<T>* 
+         * @return ObjectNode<T>* 
          */
-        Node<T>* head() const { return head_; }
+        ObjectNode<T>* head() { return head_; }
 
         /**
-         * @brief Returns a pointer to the tail of the list
+         * @brief Returns a pointer to the tail ObjectNode
          * 
-         * @return Node<T>* 
+         * @return ObjectNode<T>* 
          */
-        Node<T>* tail() const { return tail_; }
+        ObjectNode<T>* tail() { return tail_; }
 
-        /**
-         * @brief Checks if the list contains a Node with the
-         * specified data
-         * 
-         * @param data 
-         * @return bool
-         */
-        bool contains(T data) const {
-            Node<T>* curr = head_;
+        bool contains(T& data) {
+            ObjectNode<T>* curr = head_;
 
-            while (curr != NULL) {
-                if (curr.data() == data) {
+            for (int i = 0; i < size_ && curr != NULL; i++) {
+                if ((*curr.data()) == data) {
+                    return true;
+                }
+
+                curr = curr.next();
+            }
+
+            return false;
+        }
+
+        bool contains(ObjectPredicate predicate_function) {
+            ObjectNode<T>* curr = head_;
+
+            for (int i = 0; i < size_ && curr != NULL; i++) {
+                if (predicate_function(*curr.data())) {
                     return true;
                 }
 
@@ -290,30 +302,28 @@ class LinkedList {
         }
 
         /**
-         * @brief Checks if the list contains a Node that
-         * satisfies the predicate function
+         * @brief Returns the first ObjectNode that satisfies the ObjectPredicate
          * 
          * @param predicate_function 
-         * @return bool
+         * @return T* 
          */
-        bool contains(predicate predicate_function) const {
-            Node<T>* curr = head_;
+        T* get(ObjectPredicate predicate_function) {
+            ObjectNode<T>* curr = head_;
 
-            while (curr != NULL) {
-                T data = curr.data();
-                if (predicate_function(data)) {
-                    return true;
+            for (int i = 0; i < size_ && curr != NULL; i++) {
+                if (predicate_function(*curr.data())) {
+                    return curr.data();
                 }
 
                 curr = curr.next();
             }
 
-            return false;
+            return NULL;
         }
-        
+
     private:
-        Node<T>* head_;
-        Node<T>* tail_;
+        ObjectNode<T>* head_;
+        ObjectNode<T>* tail_;
         int size_;
 };
 

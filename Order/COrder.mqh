@@ -2,6 +2,11 @@
 #property version   "1.0"
 #property library
 
+/** TODO
+ *  - Store timeframe the order is placed in.
+ * 
+ */
+
 #ifndef ORDER_MQH
 #define ORDER_MQH
 
@@ -25,6 +30,15 @@ enum ENUM_CloseType {
     CT_OTHER,
     CT_NONE
 };
+
+/**
+ * @brief Converts OP codes (i.e. OP_BUY) to
+ * ENUM_OrderType (i.e. OT_BUY)
+ * 
+ * @param op 
+ * @return ENUM_OrderType 
+ */
+ENUM_OrderType OPCodeToOrderType(int op) export;   
 
 
 /**
@@ -70,6 +84,12 @@ class COrder: public CObject {
         bool isClosed() const;
 
         /**
+         * @brief Closes the order
+         * 
+         */
+        void close();
+
+        /**
          * @brief Gets the index of the order
          * 
          * @return int The index of the order or -1 if not found.
@@ -111,6 +131,14 @@ class COrder: public CObject {
          */
         void setTakeprofit(double takeprofit);
 
+        /**
+         * @brief Comparison operator
+         * 
+         * @param rhs 
+         * @return bool
+         */
+        bool operator==(const COrder& rhs) const;
+
     private:
         int ticket_;
         string symbol_;
@@ -123,9 +151,18 @@ class COrder: public CObject {
         double takeprofit_;
 };
 
+ENUM_OrderType OPCodeToOrderType(int op) export {
+    switch (op) {
+        case OP_BUY:
+            return ENUM_OrderType::OT_BUY;
+        case OP_SELL:
+            return ENUM_OrderType::OT_SELL;
+        default:
+            return ENUM_OrderType::OT_NONE;
+    }
+}
 
-
-// ---------------------- Definitions ----------------------
+// ---------------------- COrder Definitions ----------------------
 COrder::COrder(
     int ticket,
     string symbol,
@@ -180,6 +217,23 @@ bool COrder::isClosed() const {
     }
 
     return OrderCloseTime() != 0;
+}
+
+// ----------
+void COrder::close() {
+    bool success = OrderClose(
+        ticket_,
+        lots_,
+        OrderClosePrice(),
+        10
+    );
+
+    if (!success) {
+        Print("Failed to close order: " + IntegerToString(GetLastError()));
+        return;
+    }
+
+    return;
 }
 
 // ----------
@@ -299,6 +353,27 @@ void COrder::setTakeprofit(double takeprofit) {
 
     takeprofit_ = takeprofit;
     return;
+}
+
+// ----------
+bool COrder::operator==(const COrder& rhs) const {
+    bool same_ticket = ticket_ == rhs.ticket_;
+    bool same_symbol = symbol_ == rhs.symbol_;
+    bool same_type = type_ == rhs.type_;
+    bool same_lots = lots_ == rhs.lots_;
+    bool same_order_price = order_price_ == rhs.order_price_;
+    bool same_stoploss = stoploss_ == rhs.stoploss_;
+    bool same_takeprofit = takeprofit_ == rhs.takeprofit_;
+
+    return (
+        same_ticket
+        && same_symbol
+        && same_type
+        && same_lots
+        && same_order_price
+        && same_stoploss
+        && same_takeprofit
+    );
 }
 
 #endif
