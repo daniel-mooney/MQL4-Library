@@ -44,11 +44,11 @@ int CTakeProfitEvent::eventMonitor() {
             Print("CTakeProfitEvent::eventMonitor(): Order is NULL");
             continue;
         }
-
         // Check if order is closed
         if (order.getCloseType() == CT_TAKEPROFIT) {
             // Notify listeners
             CEventListenerBase* listener = listeners_.GetFirstNode();
+            int k = 0;
 
             while (listener != NULL) {
                 listener.takeProfitCallback(*order);

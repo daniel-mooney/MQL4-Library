@@ -289,6 +289,8 @@ void CNNFXMoneyManager::takeProfitCallback(const COrder& order) {
             
             break;
         }
+
+        curr = curr.next();
     }
 
     // Modify stoploss of runner orders

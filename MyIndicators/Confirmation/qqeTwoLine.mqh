@@ -29,7 +29,7 @@ class QQETwoLine: public CIndicatorBase {
 };
 
 //---------------------- Constants ----------------------
-string QQETwoLine::QQE_NAME_ = "MyIndicators\\QQETwoLine averages histo + alerts + arrows";
+string QQETwoLine::QQE_NAME_ = "MyIndicators/QQE averages histo + alerts + arrows";
 
 //---------------------- Definitions ----------------------
 

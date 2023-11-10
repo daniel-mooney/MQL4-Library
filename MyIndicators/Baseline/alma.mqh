@@ -11,9 +11,7 @@ class ALMA: public CIndicatorBase {
             ENUM_TIMEFRAMES timeframe,
             double period,
             double sigma,
-            double sample,
-            bool atr_bands,
-            double atr_multiplier
+            double sample
         );
 
         CIndicatorSignal computeSignal(
@@ -53,15 +51,11 @@ ALMA::ALMA(
     ENUM_TIMEFRAMES timeframe,
     double period,
     double sigma,
-    double sample,
-    bool atr_bands,
-    double atr_multiplier
+    double sample
 )   : CIndicatorBase(
         symbol,
         timeframe
     )
-    , atr_bands_(atr_bands)
-    , atr_multiplier_(atr_multiplier)
     , period_(period)
     , sigma_(sigma)
     , sample_(sample)
@@ -89,20 +83,6 @@ CIndicatorSignal ALMA::computeSignal(
     } else if (close < alma) {
         signal = CIndicatorSignal::SELL;
     }
-
-    double atr = iATR(
-        symbol_,
-        timeframe_,
-        14,
-        shift
-    );
-
-    if (
-        atr_bands_ 
-        && (close > alma + atr || close < alma - atr)
-    ) {
-        signal = CIndicatorSignal::NONE;
-    } 
 
     return signal;
 }
